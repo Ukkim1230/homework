@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="GameMapper">
+	<select id="selectGames" resultType="com.web.dto.GameDTO">
+		select GI_NUM, GI_NAME,
+		GI_PRICE, GI_GENRE, GI_DESC
+		from GAME_INFO
+	</select>
+	<select id="selectGame" resultType="com.web.dto.GameDTO">
+		select GI_NUM, GI_NAME,
+		GI_PRICE, GI_GENRE, GI_DESC
+		from GAME_INFO
+		WHERE GI_NUM=#{giNum}
+	</select>
+	<insert id="insertGame">
+		insert into GAME_INFO(GI_NAME, GI_PRICE, GI_GENRE,
+		GI_DESC)
+		VALUES(#{giName},#{giPrice},#{giGenre},#{giDesc})
+	</insert>
+	<update id="updateGame">
+		update GAME_INFO
+		set GI_NAME = #{giName},
+		GI_PRICE = #{giPrice},
+		GI_GENRE = #{giGenre},
+		GI_DESC = #{giDesc}
+		where GI_NUM=#{giNum}
+	</update>
+	<delete id="deleteGame">
+	DELETE FROM GAME_INFO WHERE GI_NUM=#{giNum}
+	</delete>
+</mapper>
