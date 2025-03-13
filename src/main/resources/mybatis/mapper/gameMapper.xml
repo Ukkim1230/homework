@@ -7,6 +7,22 @@
 		select GI_NUM, GI_NAME,
 		GI_PRICE, GI_GENRE, GI_DESC
 		from GAME_INFO
+		<where>
+			<if test='searchStr!=null and searchStr!=""'>
+			<if test='search=="giName"'>
+				AND GI_NAME LIKE CONCAT('%',#{searchStr},'%')
+			</if>
+			<if test='search=="giPrice"'>
+				AND GI_PRICE = #{searchStr}
+			</if>
+			<if test='search=="giGenre"'>
+				AND GI_GENRE LIKE CONCAT('%',#{searchStr},'%')
+			</if>
+			<if test='search=="giDesc"'>
+				AND GI_DESC LIKE CONCAT('%',#{searchStr},'%')
+			</if>
+			</if>
+		</where>
 	</select>
 	<select id="selectGame" resultType="com.web.dto.GameDTO">
 		select GI_NUM, GI_NAME,
@@ -15,8 +31,7 @@
 		WHERE GI_NUM=#{giNum}
 	</select>
 	<insert id="insertGame">
-		insert into GAME_INFO(GI_NAME, GI_PRICE, GI_GENRE,
-		GI_DESC)
+		insert into GAME_INFO(GI_NAME, GI_PRICE, GI_GENRE, GI_DESC)
 		VALUES(#{giName},#{giPrice},#{giGenre},#{giDesc})
 	</insert>
 	<update id="updateGame">

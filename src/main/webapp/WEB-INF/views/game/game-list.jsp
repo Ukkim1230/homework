@@ -8,8 +8,16 @@
 <title>Insert title here</title>
 </head>
 <body>
-	<a href="/views/game/game-insert">게임등록</a>
-	${empty games}
+<form method="GET" action="/game/game-list">
+<select name = "search">
+	<option value="giName" ${param.search=="giName"?"selected":""}>게임명</option>
+	<option value="giPrice" ${param.search=="giPrice"?"selected":""}>가격</option>
+	<option value="giGenre" ${param.search=="giGenre"?"selected":""}>장르</option>
+	<option value="giDesc " ${param.search=="giDesc"?"selected":""}>설명</option>
+</select>
+<input type="text" name="searchStr" value="${param.searchStr}"><button>검색</button>
+</form>
+	<a href="/game/game-insert">게임등록</a>
 	<table border="1">
 		<tr>
 			<th>번호</th>
@@ -26,7 +34,7 @@
 				<td>${game.giGenre}</td>
 				<td>${game.giDesc}</td>
 			</tr>
-			</c:forEach>
+		</c:forEach>
 	</table>
 </body>
 </html>

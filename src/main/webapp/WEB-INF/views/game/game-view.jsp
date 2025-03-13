@@ -33,13 +33,13 @@ if(request.getAttribute("game")==null){
 				<td>${game.giGenre}</td>
 			</tr>
 			<tr>
-				<th>감상</th>
+				<th>설명</th>
 				<td>${game.giDesc}</td>
 			</tr>
 			<tr>
 			<th colspan="2">
 			<a href="/game/game-update?giNum=${game.giNum}"><button type="button">수정</button></a>
-				<button>삭제</button>
+				<button>삭제</button> <a href="/game/game-list"><button type="button">돌아가기</button></a>
 				</th>
 				</tr>
 </table>

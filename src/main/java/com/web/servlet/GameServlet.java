@@ -1,8 +1,10 @@
 package com.web.servlet;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -11,6 +13,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.beanutils.BeanUtils;
+
 import com.web.dto.GameDTO;
 import com.web.service.GameService;
 
@@ -18,25 +22,29 @@ import com.web.service.GameService;
 public class GameServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private GameService gameService = new GameService();
-	
+
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String uri = request.getRequestURI();
 		int idx = uri.lastIndexOf("/") + 1;
 		String cmd = uri.substring(idx);
-		response.setContentType("text/html;charset=UTF-8");
-		PrintWriter out = response.getWriter();
 		if ("game-list".equals(cmd)) {
-			List<GameDTO> games = gameService.selectGames(null);
+			String search = request.getParameter("search");
+			String searchStr = request.getParameter("searchStr");
+			Map<String, String> param = new HashMap<>();
+			param.put("search", search);
+			param.put("searchStr", searchStr);
+			List<GameDTO> games = gameService.selectGames(param);
 			request.setAttribute("games", games);
-		} else if ("game-view".equals(cmd) || "game-update".equals(cmd)){
+
+		} else if ("game-view".equals(cmd) || "game-update".equals(cmd)) {
 			String giNumStr = request.getParameter("giNum");
 			int giNum = Integer.parseInt(giNumStr);
 			GameDTO game = gameService.selectGame(giNum);
 			request.setAttribute("game", game);
-			
+
 		}
-		RequestDispatcher rd =request.getRequestDispatcher("/WEB-INF/views" + uri + ".jsp"); // /game/game-list
+		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views" + uri + ".jsp"); // /game/game-list
 		rd.forward(request, response);
 	}
 
@@ -47,53 +55,43 @@ public class GameServlet extends HttpServlet {
 		String uri = request.getRequestURI();
 		int idx = uri.lastIndexOf("/") + 1;
 		String cmd = uri.substring(idx);
-		String giName = request.getParameter("giName");
-		String giPrice = request.getParameter("giPrice");
-		String giGenre = request.getParameter("giGenre");
-		String giDesc = request.getParameter("giDesc");
-		String giNumStr = request.getParameter("giNum");
 		GameDTO game = new GameDTO();
-		game.setGiName(giName);
-		game.setGiPrice(Integer.parseInt(request.getParameter("giPrice")));
-		game.setGiGenre(request.getParameter("giGenre"));
-		game.setGiDesc(request.getParameter("giDesc"));
-		if(giNumStr !=null) {
-			game.setGiNum(Integer.parseInt(giNumStr));
+		try {
+			BeanUtils.populate(game, request.getParameterMap());
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		} catch (InvocationTargetException e) {
+			e.printStackTrace();
 		}
-		if("insert".equals(cmd)) {	
-			int result = gameService.insertGame(game);
-			String msg = "실패하였습니다.";
-			if (result == 1) {
-				msg = "성공하였습니다.";
-			}
-			String url = "/game/game-list";
-			request.setAttribute("msg", msg);
-			request.setAttribute("url", url);
-			RequestDispatcher rd = request.getRequestDispatcher("/views/common/msg");
-			rd.forward(request, response);
-		}else if("update".equals(cmd)) {
-			int result = gameService.updateGame(game);
-			String msg = "실패하였습니다.";
-			if (result == 1) {
-				msg = "성공하였습니다.";
-			}
-			String url = "/game/game-view?giNum=" + game.getGiNum();
-			request.setAttribute("msg", msg);
-			request.setAttribute("url", url);
-			RequestDispatcher rd = request.getRequestDispatcher("/views/common/msg");
-			rd.forward(request, response);
-		}else if("delete".equals(cmd)) {
-			int result = gameService.deleteGame(game.getGiNum());
-			String msg = "실패하였습니다.";
-			if (result == 1) {
-				msg = "성공하였습니다.";
-			}
-			String url = "/game/game-list";
-			request.setAttribute("msg", msg);
-			request.setAttribute("url", url);
-			RequestDispatcher rd = request.getRequestDispatcher("/views/common/msg");
-			rd.forward(request, response);
+		String[] genres = request.getParameterValues("giGenres");
+		if (genres != null && genres.length > 0) {
+		    game.setGiGenre(String.join(",", genres));
 		}
-	}
+		System.out.println(game);
 
+		String msg = "";
+		String url = "/game/game-list";
+		if ("insert".equals(cmd)) {
+			msg = "실패하였습니다.";
+			if (gameService.insertGame(game) == 1) {
+				msg = "성공하였습니다.";
+			}
+		} else if ("update".equals(cmd)) {
+			msg = "실패하였습니다.";
+			if (gameService.updateGame(game) == 1) {
+				msg = "성공하였습니다.";
+			}
+			url = "/game/game-view?giNum=" + game.getGiNum();
+		} else if ("delete".equals(cmd)) {
+			msg = "실패하였습니다.";
+			if (gameService.deleteGame(game.getGiNum()) == 1) {
+				msg = "성공하였습니다.";
+			}
+		}
+		request.setAttribute("msg", msg);
+		request.setAttribute("url", url);
+		RequestDispatcher rd = request.getRequestDispatcher("/WEB-INF/views/common/msg.jsp");
+		rd.forward(request, response);
+
+	}
 }

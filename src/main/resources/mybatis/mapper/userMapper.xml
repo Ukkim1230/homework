@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="UserMapper">
+	<select id="selectUsers" resultType="com.web.dto.UserDTO">
+		select UI_NUM,UI_NAME,UI_AGE,UI_ID,UI_PWD,UI_PHONE,UI_ADDRESS,UI_TRANS
+		from USER_INFO
+		<where>
+			<if test='searchStr!=null and searchStr!=""'>
+				<if test='search=="uiName"'>
+					AND UI_NAME LIKE CONCAT('%',#{searchStr},'%')
+				</if>
+				<if test='search=="uiAge"'>
+					AND UI_AGE = #{searchStr}
+				</if>
+				<if test='search=="uiId"'>
+					AND UI_ID LIKE CONCAT('%',#{searchStr},'%')
+				</if>
+				<if test='search=="uiPwd"'>
+					AND UI_PWD LIKE CONCAT('%',#{searchStr},'%')
+				</if>
+				<if test='search=="uiPhone"'>
+					AND UI_PHONE LIKE CONCAT('%',#{searchStr},'%')
+				</if>
+				<if test='search=="uiAddress"'>
+					AND UI_ADDRESS LIKE CONCAT('%',#{searchStr},'%')
+				</if>
+				<if test='search=="uiTrans"'>
+					AND UI_TRANS LIKE CONCAT('%',#{searchStr},'%')
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="selectUser" resultType="com.web.dto.UserDTO">
+		select UI_NUM,UI_NAME,UI_AGE,UI_ID,UI_PWD,UI_PHONE,UI_ADDRESS,UI_TRANS
+		from USER_INFO
+		WHERE UI_NUM=#{uiNum}
+	</select>
+	<select id="selectByUiId" parameterType="map" resultType="com.web.dto.UserDTO">
+    SELECT UI_NUM, UI_NAME, UI_AGE, UI_ID, UI_PWD, UI_PHONE, UI_ADDRESS, UI_TRANS
+    FROM USER_INFO
+    WHERE UI_ID = #{uiId} AND UI_PWD = #{uiPwd}
+</select>
+
+	<insert id="insertUser">
+		insert into USER_INFO(UI_NAME,UI_AGE,UI_ID,UI_PWD,
+		UI_PHONE,UI_ADDRESS ,UI_TRANS)
+		VALUES(#{uiName},#{uiAge},#{uiId},#{uiPwd},#{uiPhone},#{uiAddress},#{uiTrans})
+	</insert>
+	<update id="updateUser">
+		update USER_INFO
+		set UI_NAME = #{uiName}
+		,UI_AGE =
+		#{uiAge}
+		,UI_ADDRESS = #{uiAddress}
+		,UI_PHONE = #{uiPhone}
+		,UI_PWD =
+		#{uiPwd}
+		,UI_TRANS =#{uiTrans}
+		where UI_NUM=#{uiNum}
+	</update>
+	<delete id="deleteUser">
+		DELETE FROM USER_INFO WHERE UI_NUM=#{uiNum}
+	</delete>
+</mapper>

@@ -1,50 +1,30 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <!DOCTYPE html>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Insert title here</title>
+<title>게임 정보 수정</title>
 </head>
 <body>
-	<%
-	if (request.getAttribute("game") == null) {
-	%>
-	이미 삭제된 테스트입니다.
-	<br>
-	<a href="/game/game-list">돌아가기</a>
-	<%
-	} else {
-	%>
 	<form action="/game/update" method="POST">
-		<input type="hidden" name="giNum" value="${game.giNum}">
-		<table border="1">
-			<tr>
-				<th>이름</th>
-				<td><input type="text" name="giName" value="${game.giName}"></td>
-			</tr>
-			<tr>
-				<th>가격</th>
-				<td><input type="text" name="giPrice" value="${game.giPrice}"></td>
-			</tr>
-			<tr>
-				<th>장르</th>
-				<td><input type="text" name="giGenre" value="${game.giGenre}"></td>
-			</tr>
-			<tr>
-				<th>감상</th>
-				<td><input type="text" name="giDesc" value="${game.giDesc}"></td>
-			</tr>
-			<tr>
-				<th colspan="2">
-					<button>수정</button>
-				</th>
-			</tr>
-		</table>
+	<input type="hidden" name="giNum" value="${game.giNum}">
+	<input type="text" name="giName" placeholder="게임명" value="${game.giName}"><br>
+	<input type="text" name="giPrice" placeholder="가격" value="${game.giPrice}"><br>
+	<input type="checkbox" name="giGenres" value="액션" id="action"
+	${fn:contains(game.giGenre, "액션")?"checked":""}><label for="action">액션</label><br>
+	<input type="checkbox" name="giGenres" value="전략" id="strategy"
+	${fn:contains(game.giGenre, "전략")?"checked":""}><label for="strategy">전략</label><br>
+	<input type="checkbox" name="giGenres" value="아케이드" id="arcade"
+	${fn:contains(game.giGenre, "아케이드")?"checked":""}><label for="arcade">아케이드</label><br>
+	<input type="checkbox" name="giGenres" value="보드" id="board"
+	${fn:contains(game.giGenre, "보드")?"checked":""}><label for="board">보드</label><br>
+	<input type="checkbox" name="giGenres" value="스포츠" id="sports"
+	${fn:contains(game.giGenre, "스포츠")?"checked":""}><label for="sports">스포츠</label><br>
+	<textarea placeholder="게임소개" name="giDesc">${game.giDesc}</textarea><br>
+	<button>수정</button>
+	<button type="button" onclick="location.href='/game/game-view?giNum=${game.giNum}'">돌아가기</button>
 	</form>
-	<%
-	}
-	%>
 </body>
 </html>

@@ -15,15 +15,7 @@
   <url-pattern>/views/*</url-pattern>
   </servlet-mapping>
   
-  <servlet>
-  <servlet-name>UserServlet</servlet-name>
-  <servlet-class>com.web.servlet.UserServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-  <servlet-name>UserServlet</servlet-name>
-  <url-pattern>/user/*</url-pattern>
-  </servlet-mapping>
-  
+
   <servlet>
   <servlet-name>foodServlet</servlet-name>
   <servlet-class>com.web.servlet.FoodServlet</servlet-class>
